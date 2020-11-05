@@ -2,6 +2,8 @@
 
 var os = require('os');
 var nodeStatic = require('node-static');
+const express = require('express');
+
 var https = require('http'); // use require('https') for https
 var socketIO = require('socket.io');
 var fs = require("fs");
@@ -10,12 +12,23 @@ var options = {
   //key: fs.readFileSync('key.pem'),
   //cert: fs.readFileSync('cert.pem')
 };
+const apps = express();
 
 var fileServer = new(nodeStatic.Server)();
+const port = process.env.PORT || 3000;
+apps.get('/', (req,res)=>{
+  // res.sendFile(__dirname, path.join('public/index.html'));
+  res.sendFile(path.join(__dirname,'./index.html'));
+  });
+  
+  // app.listen(port, ()=>{
+  //     console.log('server started on port' + port);
+  // });
+
 var app = https.createServer(options,function(req, res) {
   fileServer.serve(req, res);
 
-}).listen(1794, "0.0.0.0");
+}).listen(process.env.PORT || 1794, "0.0.0.0");
 
 var io = socketIO.listen(app);
 io.sockets.on('connection', function(socket) {
